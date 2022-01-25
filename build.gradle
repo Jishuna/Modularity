@@ -1,0 +1,59 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+	id 'java'
+	id 'maven-publish'
+	id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'me.jishuna.modularity'
+version '1.0.0'
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_16
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+}
+
+dependencies {
+    compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.18-R0.1-SNAPSHOT'
+    compileOnly group: 'org.jetbrains', name: 'annotations', version: '16.0.2'
+    implementation group: 'org.bstats', name: 'bstats-bukkit', version: '2.2.1'
+}
+
+shadowJar {
+  	minimize()
+  	
+  	delete fileTree('./target/') {
+        exclude archiveName
+    }
+  
+    setArchiveName('Modularity-' + this.version + '.jar')                                              
+    relocate 'org.bstats', 'me.jishuna.modularity.libs.bstats'
+    destinationDirectory = file("./target/")                                   
+}
+
+build {
+    dependsOn shadowJar
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.WARN
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+publishing {
+  publications {
+    shadow(MavenPublication) { publication ->
+      project.shadow.component(publication)
+    }
+  }
+}
+
+shadowJar.shouldRunAfter build

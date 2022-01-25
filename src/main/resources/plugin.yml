@@ -1,0 +1,5 @@
+name: Modularity
+version: @version@
+main: me.jishuna.modularity.Modularity
+authors: [Jishuna]
+api-version: 1.18
