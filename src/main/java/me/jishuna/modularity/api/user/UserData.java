@@ -6,9 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-
 public class UserData {
 	private final Map<String, Object> dataMap = new ConcurrentHashMap<>();
 
@@ -52,9 +49,5 @@ public class UserData {
 	@NotNull
 	public <T> T getObject(@NotNull String key, Class<T> type, @NotNull T def) {
 		return getObject(key, type).orElseGet(() -> def);
-	}
-	
-	public JsonElement toJson(Gson gson) {
-		return gson.toJsonTree(this.dataMap);
 	}
 }

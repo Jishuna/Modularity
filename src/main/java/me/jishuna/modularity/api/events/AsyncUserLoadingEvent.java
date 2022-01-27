@@ -3,25 +3,20 @@ package me.jishuna.modularity.api.events;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
+import me.jishuna.modularity.api.storage.StorageAdapter;
 import me.jishuna.modularity.api.user.User;
 
 public class AsyncUserLoadingEvent extends Event {
 
 	private static final HandlerList HANDLERS = new HandlerList();
 	private final User user;
-	private final JsonObject jsonData;
-	private final Gson gson;
+	private final StorageAdapter adapter;
 
-	public AsyncUserLoadingEvent(@NotNull User user, @Nullable JsonObject jsonData, @NotNull Gson gson) {
+	public AsyncUserLoadingEvent(@NotNull User user, @NotNull StorageAdapter adapter) {
 		super(true);
 		this.user = user;
-		this.jsonData = jsonData;
-		this.gson = gson;
+		this.adapter = adapter;
 	}
 
 	@NotNull
@@ -29,14 +24,8 @@ public class AsyncUserLoadingEvent extends Event {
 		return user;
 	}
 
-	@Nullable
-	public JsonObject getJson() {
-		return jsonData;
-	}
-
-	@NotNull
-	public Gson getGson() {
-		return gson;
+	public StorageAdapter getAdapter() {
+		return adapter;
 	}
 
 	@Override

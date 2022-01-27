@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.jishuna.modularity.Modularity;
+import me.jishuna.modularity.api.ModularityConfig;
 
 public class LanguageRegistry {
 
@@ -17,9 +18,8 @@ public class LanguageRegistry {
 		File languageFolder = new File(plugin.getDataFolder(), "/languages");
 
 		loadFromDirectory(languageFolder);
-		
-		//TODO temp
-		this.defaultLanguage = getOrCreateLanguage("en_us");
+
+		this.defaultLanguage = getOrCreateLanguage(ModularityConfig.defaultLanguage);
 	}
 
 	public void loadFromDirectory(File directory) {
