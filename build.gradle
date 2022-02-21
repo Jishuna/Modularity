@@ -6,7 +6,7 @@ plugins {
 	id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-group 'me.jishuna.modularity'
+group 'me.jishuna'
 version '1.0.0'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_16
@@ -17,7 +17,9 @@ repositories {
 	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
-    maven { url 'https://redempt.dev' }
+    maven { url = 'https://redempt.dev' }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
 }
 
 dependencies {
@@ -26,19 +28,38 @@ dependencies {
     
     implementation group: 'org.bstats', name: 'bstats-bukkit', version: '2.2.1'
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
-    implementation group: 'com.github.Redempt', name:'RedLib', version: '6.5.1'
+    implementation group: 'com.github.Redempt', name: 'RedLib', version: '6.5.1.8'
+  	implementation group: 'co.aikar', name: 'acf-paper', version: '0.5.1-SNAPSHOT'
+    implementation group: 'io.papermc', name: 'paperlib', version: '1.0.7'
+}
+
+shadowJar.configure {
+	archiveClassifier.set('')
 }
 
 shadowJar {
-  	minimize()
-  	
   	delete fileTree('./target/') {
         exclude archiveName
     }
+    
+    minimize {
+   		include(dependency('org.bstats:.*:.*'))
+  	}
   
     setArchiveName('Modularity-' + this.version + '.jar')                                              
     relocate 'org.bstats', 'me.jishuna.modularity.libs.bstats'
+    relocate 'com.zaxxer', 'me.jishuna.modularity.libs.hikaricp'
+    relocate 'redempt.redlib', 'me.jishuna.modularity.libs.redlib'
+    relocate 'co.aikar.commands', 'me.jishuna.modularity.libs.acf'
+    relocate 'co.aikar.locales', 'me.jishuna.modularity.libs.locales'
+    relocate 'io.papermc', 'me.jishuna.modularity.libs.paperlib'
     destinationDirectory = file("./target/")                                   
+}
+
+compileJava {
+    options.compilerArgs += ["-parameters"]
+    options.fork = true
+    options.forkOptions.executable = "javac"
 }
 
 build {

@@ -2,6 +2,7 @@ package me.jishuna.modularity.api.language;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,14 +18,22 @@ public class Language {
 	}
 
 	public void loadFromYaml(YamlConfiguration yaml) {
-		Map<String, Object> replacementMap = yaml.getValues(false);
-		
-		replacementMap.forEach((translationKey, value) -> this.conversionMap
-				.put(translationKey, ChatColor.translateAlternateColorCodes('&', value.toString())).toString());
+		for (String key : yaml.getKeys(true)) {
+			Object value = yaml.get(key);
+			if (value == null || !(value instanceof String))
+				continue;
+
+			System.out.println(key + " - " + value);
+			this.conversionMap.put(key, ChatColor.translateAlternateColorCodes('&', value.toString()));
+		}
 	}
 
-	public String translate(String key) {
-		return this.conversionMap.getOrDefault(key, "Missing Translation: " + key);
+	public Optional<String> translate(String key) {
+		return Optional.ofNullable(this.conversionMap.get(key));
+	}
+
+	public Map<String, String> getMap() {
+		return this.conversionMap;
 	}
 
 	public String getKey() {

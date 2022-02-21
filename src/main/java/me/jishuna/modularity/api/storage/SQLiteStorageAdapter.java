@@ -5,8 +5,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.bukkit.Location;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,7 +19,7 @@ import com.google.gson.JsonSyntaxException;
 public class SQLiteStorageAdapter implements StorageAdapter {
 
 	private final DatabaseConnectionPool connectionPool;
-	private final Gson gson = new GsonBuilder().create();
+	private final Gson gson = new GsonBuilder().registerTypeAdapter(Location.class, new LocationTypeAdapter()).create();
 
 	public SQLiteStorageAdapter(File dataDir) {
 		this.connectionPool = new DatabaseConnectionPool("Modularity", "storage", dataDir);
@@ -46,6 +50,26 @@ public class SQLiteStorageAdapter implements StorageAdapter {
 	}
 
 	@Override
+	public <T> List<T> loadAllUserData(UUID id, String table, Class<T> type) {
+		List<T> list = new ArrayList<>();
+		try (Connection connection = this.connectionPool.getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement("SELECT * FROM '" + table + "' WHERE ID=?");) {
+
+			statement.setBytes(1, DataUtils.getBytesFromUUID(id));
+
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				list.add(this.gson.fromJson(resultSet.getString("Data"), type));
+			}
+		} catch (SQLException | JsonSyntaxException ex) {
+			ex.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
 	public void saveUserData(UUID id, String table, String key, Object data) {
 		try (Connection connection = this.connectionPool.getConnection();
 				PreparedStatement statement = connection
@@ -56,7 +80,7 @@ public class SQLiteStorageAdapter implements StorageAdapter {
 			statement.setString(3, this.gson.toJson(data));
 
 			statement.executeUpdate();
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
