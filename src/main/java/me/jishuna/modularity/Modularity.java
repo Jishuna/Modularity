@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import co.aikar.commands.PaperCommandManager;
 import me.jishuna.modularity.api.FileUtils;
 import me.jishuna.modularity.api.ModularityConfig;
 import me.jishuna.modularity.api.language.LanguageRegistry;
@@ -26,8 +25,6 @@ public class Modularity extends JavaPlugin {
 	private ModuleManager moduleManager;
 	private LanguageRegistry languageRegistry;
 
-	private PaperCommandManager commandManager;
-
 	private Path jarPath;
 
 	@Override
@@ -39,8 +36,6 @@ public class Modularity extends JavaPlugin {
 		}
 
 		ConfigManager.create(this).target(ModularityConfig.class).saveDefaults().load();
-
-		this.commandManager = new PaperCommandManager(this);
 
 		setupLanguages();
 		this.storageAdapter = new SQLiteStorageAdapter(new File(this.getDataFolder(), "/data"));
@@ -93,10 +88,6 @@ public class Modularity extends JavaPlugin {
 
 	public ModuleManager getModuleManager() {
 		return moduleManager;
-	}
-	
-	public PaperCommandManager getCommandManager() {
-		return commandManager;
 	}
 
 	public LanguageRegistry getLanguageRegistry() {

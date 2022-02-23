@@ -29,7 +29,6 @@ dependencies {
     implementation group: 'org.bstats', name: 'bstats-bukkit', version: '2.2.1'
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
     implementation group: 'com.github.Redempt', name: 'RedLib', version: '6.5.1.8'
-  	implementation group: 'co.aikar', name: 'acf-paper', version: '0.5.1-SNAPSHOT'
     implementation group: 'io.papermc', name: 'paperlib', version: '1.0.7'
 }
 
@@ -50,8 +49,6 @@ shadowJar {
     relocate 'org.bstats', 'me.jishuna.modularity.libs.bstats'
     relocate 'com.zaxxer', 'me.jishuna.modularity.libs.hikaricp'
     relocate 'redempt.redlib', 'me.jishuna.modularity.libs.redlib'
-    relocate 'co.aikar.commands', 'me.jishuna.modularity.libs.acf'
-    relocate 'co.aikar.locales', 'me.jishuna.modularity.libs.locales'
     relocate 'io.papermc', 'me.jishuna.modularity.libs.paperlib'
     destinationDirectory = file("./target/")                                   
 }
